@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doable — Task Manager</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+    :root{
+      --bg:#0f0f13;
+      --surface:#18181f;
+      --surface2:#222230;
+      --border:#2e2e40;
+      --text:#e8e8f0;
+      --muted:#6b6b85;
+      --accent:#7c6af7;
+      --accent2:#a89cf7;
+      --green:#34d399;
+      --red:#f87171;
+      --yellow:#fbbf24;
+    }
+
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      padding:0;
+    }
+
+    /* Top bar */
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 32px;
+      border-bottom:1px solid var(--border);
+      background:var(--surface);
+    }
+    .logo{font-size:20px;font-weight:700;letter-spacing:-.3px;}
+    .logo span{color:var(--accent);}
+    .top-date{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+    /* Progress bar */
+    .progress-wrap{
+      padding:20px 32px;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:16px;
+    }
+    .progress-label{font-size:13px;color:var(--muted);white-space:nowrap;}
+    .progress-bar{
+      flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;
+    }
+    .progress-fill{
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--green));
+      border-radius:99px;transition:width .4s ease;
+    }
+    .progress-pct{font-size:13px;font-weight:500;color:var(--accent2);font-family:'DM Mono',monospace;min-width:36px;text-align:right;}
+
+    /* Main layout */
+    .main{
+      display:grid;
+      grid-template-columns:300px 1fr;
+      height:calc(100vh - 108px);
+    }
+
+    /* Sidebar */
+    .sidebar{
+      background:var(--surface);
+      border-right:1px solid var(--border);
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
+    .sidebar-section{padding:20px 20px 0;}
+    .sidebar-title{
+      font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+      color:var(--muted);margin-bottom:12px;
+    }
+
+    /* Add input */
+    .add-area{padding:20px;}
+    textarea.new-task{
+      width:100%;background:var(--surface2);border:1px solid var(--border);
+      border-radius:10px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;
+      font-size:14px;resize:none;outline:none;height:80px;
+      transition:border .15s;line-height:1.5;
+    }
+    textarea.new-task:focus{border-color:var(--accent);}
+    textarea.new-task::placeholder{color:var(--muted);}
+
+    .priority-row{display:flex;gap:6px;margin:10px 0;}
+    .priority-btn{
+      flex:1;padding:7px 0;border-radius:8px;border:1px solid var(--border);
+      background:transparent;color:var(--muted);font-size:12px;font-weight:500;
+      cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;
+    }
+    .priority-btn.sel-low{background:#052e16;border-color:var(--green);color:var(--green);}
+    .priority-btn.sel-med{background:#2d1b00;border-color:var(--yellow);color:var(--yellow);}
+    .priority-btn.sel-high{background:#2d0a0a;border-color:var(--red);color:var(--red);}
+
+    .submit-btn{
+      width:100%;padding:11px;background:var(--accent);color:#fff;
+      border:none;border-radius:10px;font-size:14px;font-weight:500;
+      cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;
+    }
+    .submit-btn:hover{background:#6a58e8;}
+    .submit-btn:active{transform:scale(.98);}
+
+    /* Stats pills */
+    .stat-pills{
+      display:flex;flex-direction:column;gap:8px;padding:0 20px 20px;
+    }
+    .stat-pill{
+      display:flex;align-items:center;justify-content:space-between;
+      background:var(--surface2);border-radius:10px;padding:10px 14px;
+      border:1px solid var(--border);
+    }
+    .pill-left{display:flex;align-items:center;gap:10px;}
+    .pill-dot{width:8px;height:8px;border-radius:50%;}
+    .pill-label{font-size:13px;color:var(--muted);}
+    .pill-count{font-size:14px;font-weight:600;font-family:'DM Mono',monospace;}
+
+    /* Task board */
+    .board{
+      overflow-y:auto;padding:24px 32px;
+      display:flex;flex-direction:column;gap:24px;
+    }
+
+    .col-head{
+      display:flex;align-items:center;gap:10px;margin-bottom:12px;
+    }
+    .col-dot{width:10px;height:10px;border-radius:50%;}
+    .col-name{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+    .col-count{
+      font-size:11px;background:var(--surface2);border:1px solid var(--border);
+      border-radius:20px;padding:2px 8px;color:var(--muted);font-family:'DM Mono',monospace;
+    }
+
+    .task-cards{display:flex;flex-direction:column;gap:8px;}
+
+    .task-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:14px 16px;
+      display:flex;align-items:flex-start;gap:12px;
+      transition:border .15s, transform .15s;
+      animation:fadeUp .2s ease;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    .task-card:hover{border-color:var(--accent);transform:translateX(2px);}
+    .task-card.is-done{opacity:.55;}
+
+    .priority-stripe{
+      width:3px;flex-shrink:0;border-radius:99px;align-self:stretch;
+    }
+
+    .card-body{flex:1;min-width:0;}
+    .card-text{
+      font-size:14px;line-height:1.5;word-break:break-word;
+    }
+    .task-card.is-done .card-text{text-decoration:line-through;color:var(--muted);}
+    .card-meta{
+      display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;
+    }
+    .card-time{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+    .priority-tag{
+      font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+      padding:2px 8px;border-radius:20px;
+    }
+    .tag-low{background:#052e16;color:var(--green);}
+    .tag-med{background:#2d1b00;color:var(--yellow);}
+    .tag-high{background:#2d0a0a;color:var(--red);}
+
+    .card-actions{display:flex;gap:6px;flex-shrink:0;}
+    .c-btn{
+      width:28px;height:28px;border-radius:8px;border:1px solid var(--border);
+      background:transparent;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .15s;
+    }
+    .c-btn svg{width:13px;height:13px;}
+    .c-btn.done-btn:hover{background:#052e16;border-color:var(--green);}
+    .c-btn.del-btn:hover{background:#2d0a0a;border-color:var(--red);}
+    .c-btn.done-btn svg{stroke:var(--green);}
+    .c-btn.del-btn svg{stroke:var(--red);}
+    .task-card.is-done .done-btn{background:#052e16;border-color:var(--green);}
+
+    .empty-col{
+      text-align:center;padding:32px;color:var(--muted);
+      font-size:13px;border:1px dashed var(--border);border-radius:12px;
+    }
+
+    /* Edit overlay */
+    .edit-wrap{display:flex;gap:8px;width:100%;}
+    .edit-inp{
+      flex:1;background:var(--surface2);border:1px solid var(--accent);
+      border-radius:8px;padding:6px 10px;color:var(--text);
+      font-size:14px;font-family:'DM Sans',sans-serif;outline:none;
+    }
+    .save-btn{
+      padding:6px 12px;background:var(--accent);color:#fff;
+      border:none;border-radius:8px;font-size:12px;cursor:pointer;
+      font-family:'DM Sans',sans-serif;
+    }
+
+    @media(max-width:700px){
+      .main{grid-template-columns:1fr;height:auto;}
+      .sidebar{height:auto;}
+      .board{padding:16px;}
+      .topbar,.progress-wrap{padding:14px 16px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Do<span>able</span></div>
+  <div class="top-date" id="top-date"></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">Overall progress</div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-pct" id="prog-pct">0%</div>
+</div>
+
+<div class="main">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="add-area">
+      <div class="sidebar-title">New Task</div>
+      <textarea class="new-task" id="new-task" placeholder="What needs to be done?"></textarea>
+      <div class="priority-row">
+        <button class="priority-btn sel-low" id="p-low" onclick="setPriority('low')">Low</button>
+        <button class="priority-btn" id="p-med" onclick="setPriority('med')">Medium</button>
+        <button class="priority-btn" id="p-high" onclick="setPriority('high')">High</button>
+      </div>
+      <button class="submit-btn" onclick="addTask()">Add Task →</button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Overview</div>
+    </div>
+    <div class="stat-pills">
+      <div class="stat-pill">
+        <div class="pill-left"><div class="pill-dot" style="background:var(--accent)"></div><div class="pill-label">Total tasks</div></div>
+        <div class="pill-count" id="st-total">0</div>
+      </div>
+      <div class="stat-pill">
+        <div class="pill-left"><div class="pill-dot" style="background:var(--yellow)"></div><div class="pill-label">Pending</div></div>
+        <div class="pill-count" id="st-pending">0</div>
+      </div>
+      <div class="stat-pill">
+        <div class="pill-left"><div class="pill-dot" style="background:var(--green)"></div><div class="pill-label">Completed</div></div>
+        <div class="pill-count" id="st-done">0</div>
+      </div>
+      <div class="stat-pill">
+        <div class="pill-left"><div class="pill-dot" style="background:var(--red)"></div><div class="pill-label">High priority</div></div>
+        <div class="pill-count" id="st-high">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Board -->
+  <div class="board">
+    <div>
+      <div class="col-head">
+        <div class="col-dot" style="background:var(--yellow)"></div>
+        <div class="col-name">Pending</div>
+        <div class="col-count" id="cnt-pending">0</div>
+      </div>
+      <div class="task-cards" id="list-pending"></div>
+    </div>
+    <div>
+      <div class="col-head">
+        <div class="col-dot" style="background:var(--green)"></div>
+        <div class="col-name">Completed</div>
+        <div class="col-count" id="cnt-done">0</div>
+      </div>
+      <div class="task-cards" id="list-done"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let tasks = JSON.parse(localStorage.getItem('doable-tasks') || '[]');
+  let priority = 'low';
+  let editing = null;
+
+  document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  function setPriority(p){
+    priority = p;
+    ['low','med','high'].forEach(x=>{
+      const b = document.getElementById('p-'+x);
+      b.className = 'priority-btn' + (x===p ? ' sel-'+x : '');
+    });
+  }
+
+  function now(){
+    return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) +
+      ' · ' + new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  }
+
+  function addTask(){
+    const inp = document.getElementById('new-task');
+    const text = inp.value.trim();
+    if(!text) return;
+    tasks.unshift({id:Date.now(), text, done:false, priority, created:now(), completedAt:null});
+    inp.value = '';
+    save(); render();
+  }
+
+  function toggleDone(id){
+    const t = tasks.find(t=>t.id===id);
+    if(!t) return;
+    t.done = !t.done;
+    t.completedAt = t.done ? now() : null;
+    save(); render();
+  }
+
+  function deleteTask(id){
+    tasks = tasks.filter(t=>t.id!==id);
+    save(); render();
+  }
+
+  function startEdit(id){ editing = id; render(); }
+
+  function saveEdit(id){
+    const inp = document.getElementById('ei-'+id);
+    if(!inp || !inp.value.trim()) return;
+    const t = tasks.find(t=>t.id===id);
+    if(t) t.text = inp.value.trim();
+    editing = null; save(); render();
+  }
+
+  function save(){ localStorage.setItem('doable-tasks', JSON.stringify(tasks)); }
+
+  function tagClass(p){ return {low:'tag-low',med:'tag-med',high:'tag-high'}[p]; }
+  function stripeColor(p){ return {low:'var(--green)',med:'var(--yellow)',high:'var(--red)'}[p]; }
+
+  function cardHTML(t){
+    const isEdit = editing === t.id;
+    return `<div class="task-card ${t.done?'is-done':''}" id="card-${t.id}">
+      <div class="priority-stripe" style="background:${stripeColor(t.priority)}"></div>
+      <div class="card-body">
+        ${isEdit
+          ? `<div class="edit-wrap">
+               <input class="edit-inp" id="ei-${t.id}" value="${t.text.replace(/"/g,'&quot;')}" onkeydown="if(event.key==='Enter')saveEdit(${t.id})"/>
+               <button class="save-btn" onclick="saveEdit(${t.id})">Save</button>
+             </div>`
+          : `<div class="card-text">${t.text}</div>`
+        }
+        <div class="card-meta">
+          <span class="card-time">${t.done && t.completedAt ? 'Done '+t.completedAt : 'Added '+t.created}</span>
+          <span class="priority-tag ${tagClass(t.priority)}">${t.priority}</span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="c-btn done-btn" onclick="toggleDone(${t.id})" title="${t.done?'Undo':'Complete'}">
+          <svg viewBox="0 0 14 14" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,7 5,10 12,3"/></svg>
+        </button>
+        ${!isEdit ? `<button class="c-btn" style="border-color:var(--border)" onclick="startEdit(${t.id})" title="Edit">
+          <svg viewBox="0 0 14 14" fill="none" stroke="var(--accent2)" stroke-width="1.5" stroke-linecap="round"><path d="M9 2l3 3-7 7H2v-3l7-7z"/></svg>
+        </button>` : ''}
+        <button class="c-btn del-btn" onclick="deleteTask(${t.id})" title="Delete">
+          <svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><path d="M2 3.5h10M5 3.5V2h4v1.5M4.5 3.5l.8 8h3.4l.8-8"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function render(){
+    const pending = tasks.filter(t=>!t.done);
+    const done = tasks.filter(t=>t.done);
+    const total = tasks.length;
+    const pct = total ? Math.round((done.length/total)*100) : 0;
+
+    document.getElementById('st-total').textContent = total;
+    document.getElementById('st-pending').textContent = pending.length;
+    document.getElementById('st-done').textContent = done.length;
+    document.getElementById('st-high').textContent = tasks.filter(t=>t.priority==='high'&&!t.done).length;
+    document.getElementById('prog-fill').style.width = pct+'%';
+    document.getElementById('prog-pct').textContent = pct+'%';
+    document.getElementById('cnt-pending').textContent = pending.length;
+    document.getElementById('cnt-done').textContent = done.length;
+
+    const lp = document.getElementById('list-pending');
+    const ld = document.getElementById('list-done');
+    lp.innerHTML = pending.length ? pending.map(cardHTML).join('') : '<div class="empty-col">No pending tasks — add one!</div>';
+    ld.innerHTML = done.length ? done.map(cardHTML).join('') : '<div class="empty-col">Nothing completed yet.</div>';
+
+    if(editing){
+      const inp = document.getElementById('ei-'+editing);
+      if(inp){inp.focus();inp.select();}
+    }
+  }
+
+  document.getElementById('new-task').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();addTask();}
+  });
+
+  render();
+</script>
+</body>
+</html>
