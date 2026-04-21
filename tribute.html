@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Remembering Dr. Kalam</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap');
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+    :root{
+      --ink:#111;
+      --paper:#faf8f3;
+      --cream:#f0ece0;
+      --rust:#b5451b;
+      --gold:#c9972c;
+      --muted:#5a5a52;
+      --rule:#d4cfc0;
+    }
+
+    html{scroll-behavior:smooth;}
+
+    body{
+      background:var(--paper);
+      color:var(--ink);
+      font-family:'Source Sans 3',sans-serif;
+      font-size:16px;
+      line-height:1.75;
+    }
+
+    /* ── MASTHEAD ── */
+    .masthead{
+      border-bottom:3px double var(--ink);
+      padding:18px 0 12px;
+      text-align:center;
+      background:var(--paper);
+    }
+    .masthead-date{
+      font-size:11px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .masthead-title{
+      font-family:'Libre Baskerville',serif;
+      font-size:clamp(28px,6vw,72px);
+      font-weight:700;
+      letter-spacing:-.02em;
+      line-height:1;
+    }
+    .masthead-sub{
+      font-size:12px;
+      letter-spacing:.25em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-top:6px;
+      border-top:1px solid var(--rule);
+      padding-top:8px;
+    }
+
+    /* ── KICKER BAR ── */
+    .kicker{
+      background:var(--ink);
+      color:#fff;
+      text-align:center;
+      padding:10px 20px;
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+    }
+    .kicker span{color:var(--gold);}
+
+    /* ── WRAPPER ── */
+    .page{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+    /* ── FRONT PAGE GRID ── */
+    .front{
+      display:grid;
+      grid-template-columns:1fr 2px 2fr 2px 1fr;
+      gap:0;
+      padding:32px 0;
+      border-bottom:2px solid var(--ink);
+    }
+    .col-rule{background:var(--rule);}
+
+    .col{padding:0 28px;}
+    .col:first-child{padding-left:0;}
+    .col:last-child{padding-right:0;}
+
+    /* left col */
+    .stat-block{margin-bottom:28px;}
+    .stat-num{
+      font-family:'Libre Baskerville',serif;
+      font-size:48px;
+      font-weight:700;
+      color:var(--rust);
+      line-height:1;
+    }
+    .stat-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+    .stat-desc{font-size:13px;color:var(--muted);margin-top:6px;border-top:1px solid var(--rule);padding-top:8px;}
+
+    /* centre col */
+    .headline{
+      font-family:'Libre Baskerville',serif;
+      font-size:clamp(26px,4vw,48px);
+      font-weight:700;
+      line-height:1.15;
+      margin-bottom:16px;
+    }
+    .headline em{color:var(--rust);font-style:italic;}
+    .deck{
+      font-size:15px;
+      color:var(--muted);
+      border-top:2px solid var(--ink);
+      border-bottom:1px solid var(--rule);
+      padding:10px 0;
+      margin-bottom:20px;
+    }
+    .byline{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+
+    .photo-frame{
+      width:100%;
+      aspect-ratio:4/5;
+      overflow:hidden;
+      margin-bottom:10px;
+      border:1px solid var(--rule);
+    }
+    .photo-frame img{width:100%;height:100%;object-fit:cover;object-position:top;filter:sepia(15%);}
+    .photo-caption{font-size:11px;color:var(--muted);font-style:italic;text-align:center;}
+
+    /* right col */
+    .pull-quote{
+      font-family:'Libre Baskerville',serif;
+      font-size:18px;
+      font-style:italic;
+      line-height:1.5;
+      border-top:3px solid var(--rust);
+      border-bottom:1px solid var(--rule);
+      padding:16px 0;
+      margin-bottom:24px;
+      color:var(--rust);
+    }
+    .pull-quote cite{display:block;font-size:11px;font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+    .sidebar-head{
+      font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      border-bottom:2px solid var(--ink);padding-bottom:4px;margin-bottom:12px;
+    }
+    .sidebar-item{
+      border-bottom:1px solid var(--rule);
+      padding:10px 0;
+      font-size:13px;
+    }
+    .sidebar-item strong{display:block;font-weight:600;font-size:13px;}
+    .sidebar-year{font-size:11px;color:var(--rust);font-weight:600;letter-spacing:.05em;}
+
+    /* ── SECTION BANNER ── */
+    .section-banner{
+      background:var(--cream);
+      border-top:2px solid var(--ink);
+      border-bottom:1px solid var(--rule);
+      padding:8px 0;
+      text-align:center;
+      font-size:11px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      margin:0;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline-wrap{padding:40px 0;border-bottom:2px solid var(--ink);}
+    .timeline-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:0;
+    }
+    .tl-cell{
+      padding:20px 24px;
+      border-right:1px solid var(--rule);
+      position:relative;
+    }
+    .tl-cell:last-child{border-right:none;}
+    .tl-year{
+      font-family:'Libre Baskerville',serif;
+      font-size:30px;
+      font-weight:700;
+      color:var(--rust);
+      line-height:1;
+      margin-bottom:8px;
+    }
+    .tl-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+    .tl-body{font-size:12px;color:var(--muted);}
+
+    /* ── AWARDS ── */
+    .awards-wrap{padding:40px 0;border-bottom:2px solid var(--ink);}
+    .awards-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:1px;
+      background:var(--rule);
+      border:1px solid var(--rule);
+      margin-top:24px;
+    }
+    .award-cell{
+      background:var(--paper);
+      padding:20px;
+    }
+    .award-yr{font-size:11px;color:var(--rust);font-weight:600;letter-spacing:.08em;margin-bottom:4px;}
+    .award-name{font-family:'Libre Baskerville',serif;font-size:15px;font-weight:700;margin-bottom:6px;}
+    .award-desc{font-size:12px;color:var(--muted);}
+
+    /* ── BOOKS ROW ── */
+    .books-wrap{padding:40px 0;border-bottom:2px solid var(--ink);}
+    .books-row{
+      display:flex;gap:12px;margin-top:24px;overflow-x:auto;padding-bottom:8px;
+    }
+    .book-spine{
+      flex:0 0 120px;
+      background:var(--ink);
+      color:#fff;
+      border-radius:4px 0 0 4px;
+      padding:20px 12px;
+      writing-mode:vertical-rl;
+      text-orientation:mixed;
+      transform:rotate(180deg);
+      font-size:13px;
+      font-weight:600;
+      min-height:180px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      border-left:6px solid var(--rust);
+      cursor:default;
+      transition:transform .2s;
+    }
+    .book-spine:hover{transform:rotate(180deg) translateY(-4px);}
+    .book-spine .b-title{font-size:13px;font-weight:600;}
+    .book-spine .b-year{font-size:10px;color:#aaa;letter-spacing:.08em;}
+
+    /* ── CLOSING ── */
+    .closing{
+      text-align:center;
+      padding:60px 24px;
+      border-bottom:3px double var(--ink);
+    }
+    .closing-quote{
+      font-family:'Libre Baskerville',serif;
+      font-size:clamp(20px,4vw,34px);
+      font-style:italic;
+      max-width:680px;
+      margin:0 auto 16px;
+      line-height:1.45;
+    }
+    .closing-cite{
+      font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+    }
+
+    /* ── FOOTER ── */
+    footer{
+      text-align:center;
+      padding:18px;
+      font-size:11px;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:var(--muted);
+      border-top:1px solid var(--rule);
+    }
+
+    @media(max-width:720px){
+      .front{grid-template-columns:1fr;gap:24px;}
+      .col-rule{display:none;}
+      .col{padding:0;}
+      .tl-cell{border-right:none;border-bottom:1px solid var(--rule);}
+      .books-row{flex-wrap:wrap;}
+      .book-spine{writing-mode:horizontal-tb;transform:none;border-left:none;border-top:6px solid var(--rust);min-height:auto;flex:0 0 calc(50% - 6px);}
+      .book-spine:hover{transform:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Masthead -->
+<div class="masthead">
+  <div class="masthead-date">October 15, 1931 — July 27, 2015 &nbsp;·&nbsp; A Special Tribute Edition</div>
+  <div class="masthead-title">THE KALAM CHRONICLE</div>
+  <div class="masthead-sub">Scientist &nbsp;·&nbsp; Statesman &nbsp;·&nbsp; Dreamer &nbsp;·&nbsp; Teacher</div>
+</div>
+
+<div class="kicker">In honour of <span>Dr. Avul Pakir Jainulabdeen Abdul Kalam</span> — The People's President of India</div>
+
+<!-- Front Page -->
+<div class="page">
+  <div class="front">
+
+    <!-- Left: Stats -->
+    <div class="col">
+      <div class="stat-block">
+        <div class="stat-num">84</div>
+        <div class="stat-label">Years of Life</div>
+        <div class="stat-desc">Born in Rameswaram, Tamil Nadu on 15 Oct 1931. Passed on 27 Jul 2015 in Shillong while doing what he loved — inspiring students.</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Years as President</div>
+        <div class="stat-desc">Served as the 11th President of India from 2002 to 2007, elected with overwhelming support across party lines.</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">40+</div>
+        <div class="stat-label">Universities, Doctorates</div>
+        <div class="stat-desc">Received honorary doctorates from over 40 universities around the world, recognising his extraordinary contributions.</div>
+      </div>
+    </div>
+
+    <div class="col-rule"></div>
+
+    <!-- Centre: Main story -->
+    <div class="col">
+      <div class="photo-frame">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/A._P._J._Abdul_Kalam.jpg/800px-A._P._J._Abdul_Kalam.jpg" alt="Dr. APJ Abdul Kalam"/>
+      </div>
+      <div class="photo-caption">Dr. Kalam at Rashtrapati Bhavan, New Delhi · Photo: Wikimedia Commons</div>
+      <br/>
+      <h1 class="headline">The Boy from Rameswaram Who <em>Ignited a Nation</em></h1>
+      <p class="deck">From selling newspapers at dawn to guiding India's most powerful rockets skyward — Kalam's life was the greatest proof that dreams do not discriminate.</p>
+      <p class="byline">A tribute &nbsp;·&nbsp; OIBSIP Web Development Internship</p>
+      <p>Avul Pakir Jainulabdeen Abdul Kalam grew up in a small island town, walking miles to school and rising before sunrise to earn money for his family. There was nothing in his early circumstances that guaranteed greatness — except the unrelenting fire inside him.</p>
+      <br/>
+      <p>He joined the Defence Research and Development Organisation (DRDO) and later the Indian Space Research Organisation (ISRO), where he led the team that put India's first indigenous satellite, Rohini, into orbit in 1980. It was the beginning of a legacy in rocketry and missile development that would define India's strategic power for decades.</p>
+      <br/>
+      <p>When he became President in 2002, he brought the same simplicity and curiosity of a scientist to the highest office. He met thousands of students, wrote poetry, played the veena, and never once lost touch with the young. He called them "ignited minds" — the most powerful resource on earth.</p>
+    </div>
+
+    <div class="col-rule"></div>
+
+    <!-- Right: Quotes + sidebar -->
+    <div class="col">
+      <div class="pull-quote">
+        "Don't take rest after your first victory because if you fail in the second, more lips are waiting to say that your first victory was just luck."
+        <cite>— Dr. APJ Abdul Kalam</cite>
+      </div>
+
+      <div class="sidebar-head">Key Honours</div>
+      <div class="sidebar-item"><span class="sidebar-year">1981</span><strong>Padma Bhushan</strong>Distinguished national service in science.</div>
+      <div class="sidebar-item"><span class="sidebar-year">1990</span><strong>Padma Vibhushan</strong>India's second highest civilian award.</div>
+      <div class="sidebar-item"><span class="sidebar-year">1997</span><strong>Bharat Ratna</strong>India's highest civilian honour.</div>
+      <div class="sidebar-item"><span class="sidebar-year">1997</span><strong>Indira Gandhi Award</strong>For national integration through science.</div>
+      <div class="sidebar-item"><span class="sidebar-year">2013</span><strong>Von Braun Award</strong>National Space Society, USA.</div>
+
+      <br/>
+      <div class="pull-quote">
+        "Man needs his difficulties because they are necessary to enjoy success."
+        <cite>— Wings of Fire, 1999</cite>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Timeline Section -->
+<div class="section-banner">Life & Milestones</div>
+<div class="page">
+  <div class="timeline-wrap">
+    <div class="timeline-grid">
+      <div class="tl-cell">
+        <div class="tl-year">1931</div>
+        <div class="tl-title">Born in Rameswaram</div>
+        <div class="tl-body">Born into a Tamil Muslim family. Sold newspapers to fund his own schooling.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">1958</div>
+        <div class="tl-title">Joins DRDO</div>
+        <div class="tl-body">Begins career as a scientist, working on India's first indigenous hovercraft.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">1969</div>
+        <div class="tl-title">Moves to ISRO</div>
+        <div class="tl-body">Joins ISRO and leads the SLV-III project — India's first satellite launch vehicle.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">1980</div>
+        <div class="tl-title">Rohini in Orbit</div>
+        <div class="tl-body">Successfully places Rohini satellite in orbit, making India a space-faring nation.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">1992</div>
+        <div class="tl-title">IGMDP Success</div>
+        <div class="tl-body">Leads the missile development programme producing Agni, Prithvi, Akash & more.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">1998</div>
+        <div class="tl-title">Pokhran-II</div>
+        <div class="tl-body">Key figure in India's second nuclear tests, establishing nuclear deterrence.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">2002</div>
+        <div class="tl-title">11th President</div>
+        <div class="tl-body">Elected President of India — the "People's President," beloved by students.</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-year">2015</div>
+        <div class="tl-title">Final Lecture</div>
+        <div class="tl-body">Passed away mid-lecture at IIM Shillong — inspiring students until his last breath.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Awards Section -->
+<div class="section-banner">Awards & Recognition</div>
+<div class="page">
+  <div class="awards-wrap">
+    <div class="awards-grid">
+      <div class="award-cell">
+        <div class="award-yr">1981</div>
+        <div class="award-name">Padma Bhushan</div>
+        <div class="award-desc">Third highest civilian honour for distinguished national service.</div>
+      </div>
+      <div class="award-cell">
+        <div class="award-yr">1990</div>
+        <div class="award-name">Padma Vibhushan</div>
+        <div class="award-desc">Second highest civilian award for exceptional and distinguished service.</div>
+      </div>
+      <div class="award-cell">
+        <div class="award-yr">1997</div>
+        <div class="award-name">Bharat Ratna</div>
+        <div class="award-desc">India's highest civilian honour for lifelong contributions to science and the nation.</div>
+      </div>
+      <div class="award-cell">
+        <div class="award-yr">1997</div>
+        <div class="award-name">Indira Gandhi Award</div>
+        <div class="award-desc">National integration award for uniting India through science and vision.</div>
+      </div>
+      <div class="award-cell">
+        <div class="award-yr">1998</div>
+        <div class="award-name">Veer Savarkar Award</div>
+        <div class="award-desc">Recognised for outstanding contributions to the promotion of science.</div>
+      </div>
+      <div class="award-cell">
+        <div class="award-yr">2013</div>
+        <div class="award-name">Von Braun Award</div>
+        <div class="award-desc">Awarded by the National Space Society USA for excellence in space science.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Books Section -->
+<div class="section-banner">Works & Writings</div>
+<div class="page">
+  <div class="books-wrap">
+    <p style="color:var(--muted);font-size:14px;">Dr. Kalam wrote prolifically — his books remain among the most gifted and read in India.</p>
+    <div class="books-row">
+      <div class="book-spine">
+        <span class="b-title">Wings of Fire</span>
+        <span class="b-year">1999</span>
+      </div>
+      <div class="book-spine">
+        <span class="b-title">India 2020</span>
+        <span class="b-year">1998</span>
+      </div>
+      <div class="book-spine">
+        <span class="b-title">Ignited Minds</span>
+        <span class="b-year">2002</span>
+      </div>
+      <div class="book-spine">
+        <span class="b-title">The Luminous Sparks</span>
+        <span class="b-year">2004</span>
+      </div>
+      <div class="book-spine">
+        <span class="b-title">Mission India</span>
+        <span class="b-year">2005</span>
+      </div>
+      <div class="book-spine">
+        <span class="b-title">Transcendence</span>
+        <span class="b-year">2015</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Closing -->
+<div class="closing">
+  <div class="closing-quote">"To succeed in your mission, you must have single-minded devotion to your goal."</div>
+  <div class="closing-cite">— Dr. APJ Abdul Kalam &nbsp;·&nbsp; 1931–2015 &nbsp;·&nbsp; Forever in our hearts</div>
+</div>
+
+<footer>A tribute page created for OIBSIP Web Development Internship · Task 2</footer>
+
+</body>
+</html>
